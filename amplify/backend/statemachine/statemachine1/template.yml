@@ -1,0 +1,56 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: state machine for Amplify
+Parameters:
+  env:
+    Type: String
+  functionsftask1Arn:
+    Type: String
+Resources:
+  StateMachine:
+    Type: AWS::StepFunctions::StateMachine
+    Properties:
+      StateMachineName: !Sub
+      - amplify-statemachine1-${env}
+      - { env: !Ref "env" }
+      RoleArn: !GetAtt [ StateMachineExecutionRole, Arn ]
+      DefinitionString: 
+        |-
+        {
+          "StartAt": "Wait",
+          "States": {
+            "Wait": {
+                "Type": "Wait",
+                "Seconds": 10,
+                "Next": "Process"
+            },  
+            "Process": {
+              "Type": "Task",
+              "Resource": "${LambdaArn}",
+              "End": true
+            }
+          }
+        }
+      DefinitionSubstitutions:
+        LambdaArn: !Ref "functionsftask1Arn"
+  
+  StateMachineExecutionRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: "states.amazonaws.com"
+            Action: "sts:AssumeRole"
+      Path: "/"
+      Policies:
+        - PolicyName: invokelambda
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "lambda:InvokeFunction"
+                Resource: !Ref "functionsftask1Arn"

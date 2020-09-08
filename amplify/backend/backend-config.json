@@ -1,0 +1,31 @@
+{
+	"auth": {
+		"amplifystepfunctionsc4c73229": {
+			"service": "Cognito",
+			"providerPlugin": "awscloudformation",
+			"dependsOn": [],
+			"customAuth": false
+		}
+	},
+	"statemachine": {
+		"statemachine1": {
+			"service": "States",
+			"providerPlugin": "awscloudformation",
+			"dependsOn": [
+				{
+					"category": "function",
+				 	"resourceName": "sftask1",
+					"attributes": ["Arn"]
+				}
+			]
+		}
+	},
+	"function": {
+		"sftask1": {
+			"build": true,
+			"providerPlugin": "awscloudformation",
+			"service": "Lambda",
+			"dependsOn": []
+		}
+	}
+}

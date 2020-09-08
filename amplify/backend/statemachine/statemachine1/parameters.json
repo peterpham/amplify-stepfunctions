@@ -1,0 +1,8 @@
+{
+   "functionsftask1Arn": {  
+      "Fn::GetAtt": [
+         "sftask1",
+         "Outputs.Arn"
+      ]
+   }
+}
